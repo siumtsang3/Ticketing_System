@@ -1,0 +1,33 @@
+# ── Secrets / local config ─────────────────────────────
+.env
+
+# ── Python ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ── Generated / machine-specific artifacts ─────────────
+# Excel exports & the import template (may contain real names)
+*.xlsx
+*.xlsm
+# Silent launcher (hardcoded local paths) & logs
+Start Ticketing System.vbs
+*.log
+
+# ── Local app run artifacts ────────────────────────────
+out.txt
+err.txt
+
+# ── Claude Code local (machine-specific) settings ──────
+.claude/settings.local.json
+
+# ── OS / editor ────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
