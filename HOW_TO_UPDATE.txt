@@ -1,0 +1,90 @@
+============================================================
+ IT Ticketing System — How to Update / 如何更新到新版本
+============================================================
+
+重要觀念 / Key idea:
+你的「資料」存放在本機的 MySQL 資料庫,跟程式碼是分開的。
+更新程式碼【不會】影響或刪除你的資料,也不會動到你的 .env 設定檔。
+
+Your DATA lives in your local MySQL database, which is separate
+from the program code. Updating the code will NOT touch your
+data, and will NOT overwrite your .env settings file.
+
+
+------------------------------------------------------------
+ 方法 A:當初用「git clone」安裝的(推薦)
+ Method A: If you installed with "git clone" (recommended)
+------------------------------------------------------------
+1. 在專案資料夾開啟終端機 (PowerShell 或 CMD)。
+   Open a terminal (PowerShell or CMD) inside the project folder.
+
+2. 取得最新程式碼 / Get the latest code:
+       git pull
+
+3. 如果有新增套件,安裝相依套件 (保險起見可每次都做):
+   Install dependencies (safe to run every time):
+       python -m pip install -r requirements.txt
+
+4. 照常啟動 App / Start the app as usual:
+       雙擊 "Start Ticketing System.vbs"  或  python main.py
+
+   你的 .env 與資料庫都會原封不動地保留。
+   Your .env and database are kept exactly as they were.
+
+
+------------------------------------------------------------
+ 方法 B:當初下載「ZIP」安裝的
+ Method B: If you installed by downloading the ZIP
+------------------------------------------------------------
+1. 先把你目前的 .env 檔複製到別處備份。
+   First, copy your current .env file somewhere safe as a backup.
+
+2. 到 GitHub 下載最新版 (Code -> Download ZIP):
+   Download the latest ZIP from GitHub (Code -> Download ZIP):
+       https://github.com/siumtsang3/Ticketing_System
+
+3. 解壓縮,把新檔覆蓋舊的程式資料夾。
+   Extract it and overwrite the old program folder.
+
+4. 把你剛才備份的 .env 放回專案資料夾。
+   Put your backed-up .env back into the project folder.
+
+5. 安裝相依套件 / Install dependencies:
+       python -m pip install -r requirements.txt
+
+6. 啟動 App。 / Start the app.
+
+
+------------------------------------------------------------
+ 資料庫結構的更新 / Database schema changes
+------------------------------------------------------------
+- 新增的「表格(table)」會在 App 啟動時自動建立,你不需做任何事。
+  New TABLES are created automatically when the app starts.
+
+- 若某次更新需要特別的資料庫步驟,會在該版本的 Release 說明中列明。
+  If an update needs a special database step, it will be listed
+  in that version's Release notes.
+
+
+------------------------------------------------------------
+ 怎樣知道自己用緊邊個版本 / Which version am I on?
+------------------------------------------------------------
+- App 視窗左下角會顯示版本號,例如 v1.1。
+  The app shows the version number at the bottom-left, e.g. v1.1.
+
+- 最新版本與更新內容,請看 / See the latest version & changes at:
+       https://github.com/siumtsang3/Ticketing_System/releases
+
+
+============================================================
+ 遇到問題? / Trouble?
+------------------------------------------------------------
+- "git pull" 出現 conflict:代表你改過程式碼。先備份你的改動,
+  再執行  git stash  然後  git pull。
+  If "git pull" reports a conflict, you edited the code. Back up
+  your changes, then run:  git stash   and   git pull
+
+- App 打不開 / 資料庫錯誤:確認 MySQL 服務正在執行,且 .env 設定正確。
+  App won't open / DB error: make sure the MySQL service is
+  running and your .env settings are correct.
+============================================================

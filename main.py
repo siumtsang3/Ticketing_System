@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         lay.addStretch()
 
         # Version footer
-        ver = QLabel("v1.0")
+        ver = QLabel("v1.1")
         ver.setAlignment(Qt.AlignmentFlag.AlignCenter)
         ver.setStyleSheet("color: #4a5568; font-size: 11px; padding: 8px;")
         lay.addWidget(ver)

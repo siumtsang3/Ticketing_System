@@ -199,6 +199,36 @@ class TaskDialog(QDialog):
         self.txt_remarks = QTextEdit(); self.txt_remarks.setFixedHeight(60)
         lay.addWidget(self.txt_remarks)
 
+        # ── Progress Updates (view / add / edit, edit-mode only) ───────
+        lay.addWidget(QLabel("Progress Updates:"))
+        self.updates_table = QTableWidget(0, 2)
+        self.updates_table.setHorizontalHeaderLabels(["Date", "Details"])
+        self.updates_table.setColumnWidth(0, 100)
+        self.updates_table.horizontalHeader().setStretchLastSection(True)
+        self.updates_table.verticalHeader().setVisible(False)
+        self.updates_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.updates_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.updates_table.setFixedHeight(150)
+        self.updates_table.doubleClicked.connect(self._edit_update)
+        lay.addWidget(self.updates_table)
+
+        self.lbl_updates_hint = QLabel("Save the task first, then re-open it to add progress updates.")
+        self.lbl_updates_hint.setStyleSheet("color: #a0aec0; font-size: 12px;")
+        lay.addWidget(self.lbl_updates_hint)
+
+        upd_btn_row = QHBoxLayout()
+        upd_btn_row.addStretch()
+        self.btn_upd_add  = QPushButton("+ Add Update"); self.btn_upd_add.setObjectName("successButton")
+        self.btn_upd_edit = QPushButton("Edit Update")
+        self.btn_upd_del  = QPushButton("Delete Update"); self.btn_upd_del.setObjectName("dangerButton")
+        self.btn_upd_add.clicked.connect(self._add_update)
+        self.btn_upd_edit.clicked.connect(self._edit_update)
+        self.btn_upd_del.clicked.connect(self._delete_update)
+        upd_btn_row.addWidget(self.btn_upd_add)
+        upd_btn_row.addWidget(self.btn_upd_edit)
+        upd_btn_row.addWidget(self.btn_upd_del)
+        lay.addLayout(upd_btn_row)
+
         scroll.setWidget(body)
         outer.addWidget(scroll)
 
@@ -213,6 +243,88 @@ class TaskDialog(QDialog):
         btn_row.addWidget(btn_cancel)
         btn_row.addWidget(btn_save)
         outer.addLayout(btn_row)
+
+        self._refresh_updates()
+
+    # ── Progress updates panel ────────────────────────────────────────
+    def _refresh_updates(self):
+        has_task = bool(self.task_data and self.task_data.get("task_id"))
+        self.btn_upd_add.setEnabled(has_task)
+        self.btn_upd_edit.setEnabled(has_task)
+        self.btn_upd_del.setEnabled(has_task)
+        self.lbl_updates_hint.setVisible(not has_task)
+        self.updates_table.setRowCount(0)
+        if not has_task:
+            return
+        try:
+            rows = self.db.execute(
+                "SELECT update_id, update_date, update_details FROM task_updates "
+                "WHERE task_id=%s ORDER BY update_date DESC, update_id DESC",
+                (self.task_data["task_id"],), fetch=True,
+            )
+        except Exception:
+            rows = []
+        self.updates_table.setRowCount(len(rows))
+        for r, u in enumerate(rows):
+            date_item = QTableWidgetItem(
+                str(u["update_date"])[:10] if u.get("update_date") else ""
+            )
+            date_item.setData(Qt.ItemDataRole.UserRole, u["update_id"])
+            details = (u.get("update_details") or "").replace("\n", " ")
+            self.updates_table.setItem(r, 0, date_item)
+            self.updates_table.setItem(r, 1, QTableWidgetItem(details))
+
+    def _selected_update_id(self):
+        row = self.updates_table.currentRow()
+        if row < 0:
+            return None
+        item = self.updates_table.item(row, 0)
+        return item.data(Qt.ItemDataRole.UserRole) if item else None
+
+    def _add_update(self):
+        if not (self.task_data and self.task_data.get("task_id")):
+            return
+        dlg = TaskUpdateDialog(
+            self.db, self.task_data["task_id"],
+            self.task_data.get("task_title", ""), parent=self,
+        )
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            self._refresh_updates()
+
+    def _edit_update(self):
+        uid = self._selected_update_id()
+        if not uid:
+            QMessageBox.information(self, "Select", "Please select an update to edit.")
+            return
+        rec = self.db.execute(
+            "SELECT update_id, update_date, update_details FROM task_updates "
+            "WHERE update_id=%s", (uid,), fetch_one=True,
+        )
+        if not rec:
+            return
+        dlg = TaskUpdateDialog(
+            self.db, self.task_data["task_id"],
+            self.task_data.get("task_title", ""),
+            update_data=rec, parent=self,
+        )
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            self._refresh_updates()
+
+    def _delete_update(self):
+        uid = self._selected_update_id()
+        if not uid:
+            QMessageBox.information(self, "Select", "Please select an update to delete.")
+            return
+        reply = QMessageBox.question(
+            self, "Confirm Delete", f"Delete update #{uid}?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                self.db.execute("DELETE FROM task_updates WHERE update_id=%s", (uid,))
+                self._refresh_updates()
+            except Exception as exc:
+                QMessageBox.critical(self, "Error", f"Delete failed:\n{exc}")
 
     # ── Helpers ───────────────────────────────────────────────────────
     def _load_people_into(self, combo: QComboBox):

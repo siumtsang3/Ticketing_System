@@ -233,6 +233,23 @@ The left sidebar contains seven sections. Click any item to switch pages.
 
 ---
 
+## Updating to a New Version
+
+Your data lives in MySQL and your settings in `.env` — both are separate from the
+code, so updating never touches them.
+
+- Installed with **git**: run `git pull` in the project folder, then
+  `python -m pip install -r requirements.txt`.
+- Installed from **ZIP**: back up your `.env`, download the latest ZIP, overwrite
+  the files, and restore your `.env`.
+
+New database tables are created automatically on startup. See
+[HOW_TO_UPDATE.txt](HOW_TO_UPDATE.txt) for step-by-step instructions and the
+[Releases page](https://github.com/siumtsang3/Ticketing_System/releases) for the
+version history.
+
+---
+
 ## Project Structure
 
 ```
