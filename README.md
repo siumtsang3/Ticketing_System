@@ -19,6 +19,44 @@ PyQt6, Python, MySQL, and the Anthropic Claude API.
 
 ---
 
+## Screenshots
+
+> Screenshots use sample/demo data — they do not show any real records.
+
+### Dashboard
+Live summary cards at a glance.
+
+![Dashboard](assets/screenshots/dashboard.png)
+
+### Task Log
+Filterable task tracker with multi-teammate **Followers**, colour-coded priority/status,
+click-to-sort columns, Excel **Import**, and per-task **Update**.
+
+![Task Log](assets/screenshots/tasks.png)
+
+### Update Log
+Every dated task update in one place, filterable by task.
+
+![Update Log](assets/screenshots/update_log.png)
+
+### Excel Export
+Export by date range or project, with progress shown chronologically.
+
+![Excel Export](assets/screenshots/export.png)
+
+<details>
+<summary>More screenshots — People &amp; Projects</summary>
+
+### People Master
+![People](assets/screenshots/people.png)
+
+### Project Master
+![Projects](assets/screenshots/projects.png)
+
+</details>
+
+---
+
 ## Prerequisites
 
 | Requirement | Version |

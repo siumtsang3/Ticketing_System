@@ -29,14 +29,14 @@ class StatCard(QFrame):
         val_font = QFont("Segoe UI", 32, QFont.Weight.Bold)
         self._val_label.setFont(val_font)
         self._val_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._val_label.setStyleSheet("color: #ffffff;")
+        self._val_label.setStyleSheet("color: #ffffff; background: transparent;")
 
         # Title text
         self._title_label = QLabel(title)
         title_font = QFont("Segoe UI", 12)
         self._title_label.setFont(title_font)
         self._title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._title_label.setStyleSheet("color: rgba(255,255,255,0.88);")
+        self._title_label.setStyleSheet("color: rgba(255,255,255,0.88); background: transparent;")
         self._title_label.setWordWrap(True)
 
         layout.addStretch()
